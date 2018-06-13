@@ -8,7 +8,7 @@ int fget(char *filename, char **ptr, size_t *l){
 		return FALSE;
 	if (fstat(fd, &buf) < 0)
 		return FALSE;
-	if (((*ptr) = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
+	if (((*ptr) = mmap(NULL, buf.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0))
 		== MAP_FAILED)
 		return FALSE;
 	(*l) = buf.st_size;

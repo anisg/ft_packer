@@ -18,10 +18,10 @@ int packer(char *filename){
 	if (fget(filename, &s, &n) == FALSE) return fail("can\'t open file");
 
 	k = random_key();
-	//encrypt_bin((uint32_t *)s, n, k);
+	encrypt_bin((uint32_t *)s, n, k);
 	//inject_binary(s,n);
 	//inject_key(k);
-	printf("k: %u\n", k);
+	printf("k: %u\n", s, k);
 
 	//if (fput(filename, s, n) == FALSE) return fail("can\'t save new file");
 	return 0;
