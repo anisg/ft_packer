@@ -1,5 +1,7 @@
 #include "packer.h"
 
+extern char *template;
+
 int fail(char *reason){
 	printf("Error: %s\n", reason);
 	return -1;
@@ -11,14 +13,15 @@ int usage(char *name){
 }
 
 int packer(char *filename){
-	char *s; size_t n; size_t k;
+	char *s; size_t n; uint32_t k;
 
 	if (fget(filename, &s, &n) == FALSE) return fail("can\'t open file");
 
-	//k = random_key();
-	//encrypt(s,n, k);
+	k = random_key();
+	//encrypt_bin((uint32_t *)s, n, k);
 	//inject_binary(s,n);
 	//inject_key(k);
+	printf("k: %u\n", k);
 
 	//if (fput(filename, s, n) == FALSE) return fail("can\'t save new file");
 	return 0;
