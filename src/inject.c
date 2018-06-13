@@ -3,11 +3,11 @@
 void elf_replace_s(char *b, size_t len, char *bin, int n){
 	//char *s = copy(*b);
 	int pos_length = 0x4cb;
-	int pos_data = 0x574;
+	int pos_data = 0x564;
 	printf("b:%p,len:%zu\n", b, len);
 	b[pos_data+1] = 'X';
-	b[pos_data+2] = 'X';
-	b[pos_data+3] = 'X';
+	int *x = b + pos_length;
+//	x[0] = 4;
 }
 
 void inject_binary(char *s, int n){

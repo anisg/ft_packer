@@ -1,2 +1,7 @@
-#include <stdio.h>
-int main(){ printf("salut\n"); return 5; }
+#include <unistd.h>
+
+
+int main(){
+	write(0, "salut\n", 5);
+	return 0;
+}
