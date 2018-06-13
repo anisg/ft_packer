@@ -21,7 +21,7 @@ int packer(char *filename){
 	encrypt_bin((uint32_t *)s, n, k);
 	//inject_binary(s,n);
 	//inject_key(k);
-	printf("k: %u\n", s, k);
+	printf("k: %u\n", k);
 
 	//if (fput(filename, s, n) == FALSE) return fail("can\'t save new file");
 	return 0;
