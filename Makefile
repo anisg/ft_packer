@@ -1,10 +1,10 @@
 NAME = woody_woodpacker
 COLOR = "\033[92m"
 
-SRC = main.c
+SRC = main.c utils.c
 
 COMPILER = gcc
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra #-Werror
 
 SRC_DIR 			= src
 OBJ_DIR				= obj
