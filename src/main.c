@@ -1,7 +1,5 @@
 #include "packer.h"
 
-extern char *template;
-
 int fail(char *reason){
 	printf("Error: %s\n", reason);
 	return -1;
@@ -19,11 +17,11 @@ int packer(char *filename){
 
 	k = random_key();
 	encrypt_bin((uint32_t *)s, n, k);
-	//inject_binary(s,n);
-	//inject_key(k);
+	inject_binary(s, n);
+	//inject_key(s, k);
 	printf("k: %u\n", k);
 
-	//if (fput(filename, s, n) == FALSE) return fail("can\'t save new file");
+	//if (fput("woody", template, template_size) == FALSE) return fail("can\'t save new file");
 	return 0;
 }
 

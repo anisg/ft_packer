@@ -19,7 +19,7 @@ int fget(char *filename, char **ptr, size_t *l){
 int fput(char *filename, char *ptr, size_t l){
 	int fd;
 
-	if ((fd = open(filename, O_WRONLY)) < 0)
+	if ((fd = open(filename, O_WRONLY | O_CREAT, 0755)) < 0)
 		return FALSE;
 	write(fd, ptr, l);
 	close(fd);

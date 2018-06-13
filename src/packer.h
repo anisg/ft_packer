@@ -27,6 +27,12 @@ uint32_t	random_key();
 void		encrypt_bin(uint32_t *buffer, size_t n, uint32_t key);
 
 /*
+** inject.c
+*/
+void inject_binary(char *s, int n);
+
+
+/*
 ** main.c
 */
 
