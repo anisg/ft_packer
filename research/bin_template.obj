@@ -1,5 +1,5 @@
 
-woody:     file format elf64-x86-64
+research/bin_template:     file format elf64-x86-64
 
 
 Disassembly of section .init:
@@ -125,7 +125,7 @@ Disassembly of section .text:
 0000000000400526 <main>:
   400526:	55                   	push   %rbp
   400527:	48 89 e5             	mov    %rsp,%rbp
-  40052a:	ba 06 00 00 00       	mov    $0x6,%edx
+  40052a:	ba 05 00 00 00       	mov    $0x5,%edx
   40052f:	be d4 05 40 00       	mov    $0x4005d4,%esi
   400534:	bf 00 00 00 00       	mov    $0x0,%edi
   400539:	e8 c2 fe ff ff       	callq  400400 <write@plt>

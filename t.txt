@@ -1,0 +1,64 @@
+inpoint: 5d4
+entry: 400430
+phoff: 40
+shoff: 19d8
+call section
+nsize:31
+1953391981
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+after
+0
+0
+0
+0
+k: 4016130491

@@ -29,6 +29,7 @@ void		encrypt_bin(uint32_t *buffer, size_t n, uint32_t key);
 /*
 ** inject.c
 */
+#include <elf.h>
 void inject_binary(char *s, int n);
 
 
