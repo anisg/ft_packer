@@ -19,7 +19,7 @@ int packer(char *filename){
 
 	k = random_key();
 	encrypt_bin((uint32_t *)s, n, k);
-	//inject_binary(s,n);
+	inject_binary(s,n);
 	//inject_key(k);
 	printf("k: %u\n", k);
 
