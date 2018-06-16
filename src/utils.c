@@ -31,7 +31,7 @@ void insert(char **s1, size_t *n1, int pos, char *s2, size_t n2){
 	size_t i,j,l;
 	for (i = 0; i <= pos; i += 1){ ns[i] = (*s1)[i]; }
 	for (j = 0; j < n2; j += 1){ns[i+j] = s2[j]; }
-	for (l = 0; i+l+1 < *n1; l += 1){ ns[i+j+l] = (*s1)[i+l+1]; }
+	for (l = 0; i+l < *n1; l += 1){ ns[i+j+l] = (*s1)[i+l]; }
 	//TODO: clean here *s
 	*s1 = ns;
 	*n1 = (*n1) + n2;
