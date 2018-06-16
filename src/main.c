@@ -18,7 +18,8 @@ int packer(char *filename){
 	if (fget(filename, &s, &n) == FALSE) return fail("can\'t open file");
 
 	k = random_key();
-	encrypt_bin((uint32_t *)s, n, k);
+	//encrypt_bin((uint32_t *)s, n, k);
+	printf("taille du fichier: %zu\n", n);
 	inject_binary(s,n);
 	//inject_key(k);
 	printf("k: %u\n", k);

@@ -4,7 +4,7 @@
 
 void elf64_update_header(void *b, size_t len, size_t pos, size_t add){
 	Elf64_Ehdr *h = b;
-	if (h->e_shoff > pos) h->e_shoff += add;
+	h->e_shoff += add;
 }
 
 void elf64_update_segments(void *b, size_t len, size_t pos, size_t add){
@@ -45,22 +45,64 @@ void elf64_update_sections_header(void *b, size_t len, size_t pos, size_t add){
 	}
 }
 
-void elf_replace_s(char **b, size_t *len, char *bin, int n){
-	int pos_length = 0x52b;
-	int pos_data = 0x5d4;
-
-	//insert(b, len, pos_data, "0123456789abcdefg", 17);
-	//elf64_update_header(*b, *len, pos_data, 16);
-	//elf64_update_sections_header(*b, *len, pos_data, 16);
-	//elf64_update_segments(*b, *len, pos_data, 16);
-	int *x = ((*b) + pos_length);
-	x[0] = 16;
+int find_last_loaded_segment(void *b, size_t len, int *pos){
+	Elf64_Ehdr *h = b;
+	int n = h->e_phnum;
+	Elf64_Phdr *ph = b + h->e_phoff;
+	int x = -1;
+	for (int i = 0; i < n; i += 1){
+		if (ph[i].p_type == PT_LOAD)
+			x = i;
+	}
+	if (x == -1)
+		return FALSE;
+	*pos = x;
+	return TRUE;	 
 }
 
-void inject_binary(char *s, int n){
+void elf_replace_s(char **s, size_t *len, char *shellcode, int slen){
+
+	int x = 0;
+	find_last_loaded_segment(*s, *len, &x);
+	
+	Elf64_Ehdr *h = (*s);
+	Elf64_Phdr *ph = (*s) + h->e_phoff;
+	
+	printf("segment: %d\n", x);
+	int start = h->e_phoff + h->e_phnum * sizeof(*ph);
+	size_t pos = start + ph[x].p_offset + ph[x].p_filesz;
+	printf("start:%zx\n", start);
+	printf("pos:%zx\n", pos);
+	printf("sh_offset:%zx\n", h->e_shoff);
+	insert(s, len, pos, shellcode, slen);
+	h = (*s);
+	ph = (*s) + h->e_phoff;
+
+	//get entry point of shellcode:
+	//Elf64_Ehdr *shellh = (Elf64_Ehdr *)shellcode;
+	//size_t shellpos = shellh->e_phoff + shellh->e_phnum * sizeof(*ph); 
+
+//	printf("entry zone: %zx\n", ph[x].p_vaddr);
+//	h->e_entry = ph[x].p_vaddr + ph[x].p_filesz + 0x80;
+
+	ph[x].p_filesz += slen;
+	ph[x].p_memsz += slen;
+
+	elf64_update_header(*s, *len, pos, slen);
+	elf64_update_sections_header(*s, *len, pos, slen);
+	//elf64_update_segments(*b, *len, pos_data, 16);
+}
+
+void inject_binary(char *s, size_t n){
 	char *b;size_t blen;
-	if (!fget("bin_template", &b, &blen)) return ;
-	elf_replace_s(&b, &blen, s, n);
-	fput("woody", b, blen);
+	if (!fget("shellcode", &b, &blen)) return ;
+	char *abc = malloc(12);
+	abc = "1234567";
+	size_t len = 12;
+	printf("TEST: %.*s\n", len, abc);
+	insert(&abc, &len, 3, "ABC", 3);
+	printf("TEST then: %.*s\n", len, abc);
+	elf_replace_s(&s, &n, b, blen);
+	fput("woody", s, n);
 	//return TRUE;
 }
