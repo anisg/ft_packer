@@ -48,16 +48,16 @@ int find_last_loaded_segment(void *b, size_t len, int *pos){
 	Elf64_Phdr *ph = b + h->e_phoff;
 	int x = -1;
 	for (int i = 0; i < n; i += 1){
-		if (ph[i].p_type == PT_LOAD)
+		if (ph[i].p_type == PT_LOAD){
+			printf("off:%d\n", ph[i].p_offset);
 			x = i;
+		}
 	}
 	if (x == -1)
 		return FALSE;
 	*pos = x;
 	return TRUE;	 
 }
-
-int find_text_offset(char **)
 
 void elf_replace_s(char **s, size_t *len, char *shellcode, int slen){
 
