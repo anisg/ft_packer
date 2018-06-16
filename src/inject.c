@@ -49,10 +49,10 @@ void elf_replace_s(char **b, size_t *len, char *bin, int n){
 	int pos_length = 0x52b;
 	int pos_data = 0x5d4;
 
-	insert(b, len, pos_data, "0123456789abcdefg", 17);
-	elf64_update_header(*b, *len, pos_data, 16);
-	elf64_update_sections_header(*b, *len, pos_data, 16);
-	elf64_update_segments(*b, *len, pos_data, 16);
+	//insert(b, len, pos_data, "0123456789abcdefg", 17);
+	//elf64_update_header(*b, *len, pos_data, 16);
+	//elf64_update_sections_header(*b, *len, pos_data, 16);
+	//elf64_update_segments(*b, *len, pos_data, 16);
 	int *x = ((*b) + pos_length);
 	x[0] = 16;
 }
@@ -60,8 +60,6 @@ void elf_replace_s(char **b, size_t *len, char *bin, int n){
 void inject_binary(char *s, int n){
 	char *b;size_t blen;
 	if (!fget("bin_template", &b, &blen)) return ;
-	//if (is_elf_format(b,blen) == FALSE)
-	//	return FALSE;
 	elf_replace_s(&b, &blen, s, n);
 	fput("woody", b, blen);
 	//return TRUE;
