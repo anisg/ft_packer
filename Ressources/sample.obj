@@ -1,0 +1,213 @@
+
+sample:	file format ELF32-i386
+
+Disassembly of section .init:
+_init:
+ 8048270:	53 	pushl	%ebx
+ 8048271:	83 ec 08 	subl	$8, %esp
+ 8048274:	e8 97 00 00 00 	calll	151 <__x86.get_pc_thunk.bx>
+ 8048279:	81 c3 e3 13 00 00 	addl	$5091, %ebx
+ 804827f:	8b 83 fc ff ff ff 	movl	-4(%ebx), %eax
+ 8048285:	85 c0 	testl	%eax, %eax
+ 8048287:	74 05 	je	5 <_init+0x1E>
+ 8048289:	e8 42 00 00 00 	calll	66
+ 804828e:	83 c4 08 	addl	$8, %esp
+ 8048291:	5b 	popl	%ebx
+ 8048292:	c3 	retl
+Disassembly of section .plt:
+.plt:
+ 80482a0:	ff 35 60 96 04 08 	pushl	134518368
+ 80482a6:	ff 25 64 96 04 08 	jmpl	*134518372
+ 80482ac:	00 00 	addb	%al, (%eax)
+ 80482ae:	00 00 	addb	%al, (%eax)
+ 80482b0:	ff 25 68 96 04 08 	jmpl	*134518376
+ 80482b6:	68 00 00 00 00 	pushl	$0
+ 80482bb:	e9 e0 ff ff ff 	jmp	-32 <.plt>
+ 80482c0:	ff 25 6c 96 04 08 	jmpl	*134518380
+ 80482c6:	68 08 00 00 00 	pushl	$8
+ 80482cb:	e9 d0 ff ff ff 	jmp	-48 <.plt>
+Disassembly of section .plt.got:
+.plt.got:
+ 80482d0:	ff 25 58 96 04 08 	jmpl	*134518360
+ 80482d6:	66 90 	nop
+Disassembly of section .text:
+_start:
+ 80482e0:	31 ed 	xorl	%ebp, %ebp
+ 80482e2:	5e 	popl	%esi
+ 80482e3:	89 e1 	movl	%esp, %ecx
+ 80482e5:	83 e4 f0 	andl	$-16, %esp
+ 80482e8:	50 	pushl	%eax
+ 80482e9:	54 	pushl	%esp
+ 80482ea:	52 	pushl	%edx
+ 80482eb:	68 70 84 04 08 	pushl	$134513776
+ 80482f0:	68 10 84 04 08 	pushl	$134513680
+ 80482f5:	51 	pushl	%ecx
+ 80482f6:	56 	pushl	%esi
+ 80482f7:	68 e0 83 04 08 	pushl	$134513632
+ 80482fc:	e8 bf ff ff ff 	calll	-65 <.plt+0x20>
+ 8048301:	f4 	hlt
+ 8048302:	66 90 	nop
+ 8048304:	66 90 	nop
+ 8048306:	66 90 	nop
+ 8048308:	66 90 	nop
+ 804830a:	66 90 	nop
+ 804830c:	66 90 	nop
+ 804830e:	66 90 	nop
+
+__x86.get_pc_thunk.bx:
+ 8048310:	8b 1c 24 	movl	(%esp), %ebx
+ 8048313:	c3 	retl
+ 8048314:	66 90 	nop
+ 8048316:	66 90 	nop
+ 8048318:	66 90 	nop
+ 804831a:	66 90 	nop
+ 804831c:	66 90 	nop
+ 804831e:	66 90 	nop
+
+deregister_tm_clones:
+ 8048320:	b8 7b 96 04 08 	movl	$134518395, %eax
+ 8048325:	2d 78 96 04 08 	subl	$134518392, %eax
+ 804832a:	83 f8 06 	cmpl	$6, %eax
+ 804832d:	76 1a 	jbe	26 <deregister_tm_clones+0x29>
+ 804832f:	b8 00 00 00 00 	movl	$0, %eax
+ 8048334:	85 c0 	testl	%eax, %eax
+ 8048336:	74 11 	je	17 <deregister_tm_clones+0x29>
+ 8048338:	55 	pushl	%ebp
+ 8048339:	89 e5 	movl	%esp, %ebp
+ 804833b:	83 ec 14 	subl	$20, %esp
+ 804833e:	68 78 96 04 08 	pushl	$134518392
+ 8048343:	ff d0 	calll	*%eax
+ 8048345:	83 c4 10 	addl	$16, %esp
+ 8048348:	c9 	leave
+ 8048349:	f3 	rep
+ 804834a:	c3 	retl
+ 804834b:	90 	nop
+ 804834c:	8d 74 26 00 	leal	(%esi), %esi
+
+register_tm_clones:
+ 8048350:	b8 78 96 04 08 	movl	$134518392, %eax
+ 8048355:	2d 78 96 04 08 	subl	$134518392, %eax
+ 804835a:	c1 f8 02 	sarl	$2, %eax
+ 804835d:	89 c2 	movl	%eax, %edx
+ 804835f:	c1 ea 1f 	shrl	$31, %edx
+ 8048362:	01 d0 	addl	%edx, %eax
+ 8048364:	d1 f8 	sarl	%eax
+ 8048366:	74 1b 	je	27 <register_tm_clones+0x33>
+ 8048368:	ba 00 00 00 00 	movl	$0, %edx
+ 804836d:	85 d2 	testl	%edx, %edx
+ 804836f:	74 12 	je	18 <register_tm_clones+0x33>
+ 8048371:	55 	pushl	%ebp
+ 8048372:	89 e5 	movl	%esp, %ebp
+ 8048374:	83 ec 10 	subl	$16, %esp
+ 8048377:	50 	pushl	%eax
+ 8048378:	68 78 96 04 08 	pushl	$134518392
+ 804837d:	ff d2 	calll	*%edx
+ 804837f:	83 c4 10 	addl	$16, %esp
+ 8048382:	c9 	leave
+ 8048383:	f3 	rep
+ 8048384:	c3 	retl
+ 8048385:	8d 74 26 00 	leal	(%esi), %esi
+ 8048389:	8d bc 27 00 00 00 00 	leal	(%edi), %edi
+
+__do_global_dtors_aux:
+ 8048390:	80 3d 78 96 04 08 00 	cmpb	$0, 134518392
+ 8048397:	75 13 	jne	19 <__do_global_dtors_aux+0x1C>
+ 8048399:	55 	pushl	%ebp
+ 804839a:	89 e5 	movl	%esp, %ebp
+ 804839c:	83 ec 08 	subl	$8, %esp
+ 804839f:	e8 7c ff ff ff 	calll	-132 <deregister_tm_clones>
+ 80483a4:	c6 05 78 96 04 08 01 	movb	$1, 134518392
+ 80483ab:	c9 	leave
+ 80483ac:	f3 	rep
+ 80483ad:	c3 	retl
+ 80483ae:	66 90 	nop
+
+frame_dummy:
+ 80483b0:	b8 6c 95 04 08 	movl	$134518124, %eax
+ 80483b5:	8b 10 	movl	(%eax), %edx
+ 80483b7:	85 d2 	testl	%edx, %edx
+ 80483b9:	75 05 	jne	5 <frame_dummy+0x10>
+ 80483bb:	eb 93 	jmp	-109 <register_tm_clones>
+ 80483bd:	8d 76 00 	leal	(%esi), %esi
+ 80483c0:	ba 00 00 00 00 	movl	$0, %edx
+ 80483c5:	85 d2 	testl	%edx, %edx
+ 80483c7:	74 f2 	je	-14 <frame_dummy+0xB>
+ 80483c9:	55 	pushl	%ebp
+ 80483ca:	89 e5 	movl	%esp, %ebp
+ 80483cc:	83 ec 14 	subl	$20, %esp
+ 80483cf:	50 	pushl	%eax
+ 80483d0:	ff d2 	calll	*%edx
+ 80483d2:	83 c4 10 	addl	$16, %esp
+ 80483d5:	c9 	leave
+ 80483d6:	e9 75 ff ff ff 	jmp	-139 <register_tm_clones>
+ 80483db:	66 90 	nop
+ 80483dd:	66 90 	nop
+ 80483df:	90 	nop
+
+main:
+ 80483e0:	55 	pushl	%ebp
+ 80483e1:	89 e5 	movl	%esp, %ebp
+ 80483e3:	83 ec 18 	subl	$24, %esp
+ 80483e6:	8d 05 90 84 04 08 	leal	134513808, %eax
+ 80483ec:	c7 45 fc 00 00 00 00 	movl	$0, -4(%ebp)
+ 80483f3:	89 04 24 	movl	%eax, (%esp)
+ 80483f6:	e8 b5 fe ff ff 	calll	-331 <.plt+0x10>
+ 80483fb:	31 c9 	xorl	%ecx, %ecx
+ 80483fd:	89 45 f8 	movl	%eax, -8(%ebp)
+ 8048400:	89 c8 	movl	%ecx, %eax
+ 8048402:	83 c4 18 	addl	$24, %esp
+ 8048405:	5d 	popl	%ebp
+ 8048406:	c3 	retl
+ 8048407:	66 90 	nop
+ 8048409:	66 90 	nop
+ 804840b:	66 90 	nop
+ 804840d:	66 90 	nop
+ 804840f:	90 	nop
+
+__libc_csu_init:
+ 8048410:	55 	pushl	%ebp
+ 8048411:	57 	pushl	%edi
+ 8048412:	31 ff 	xorl	%edi, %edi
+ 8048414:	56 	pushl	%esi
+ 8048415:	53 	pushl	%ebx
+ 8048416:	e8 f5 fe ff ff 	calll	-267 <__x86.get_pc_thunk.bx>
+ 804841b:	81 c3 41 12 00 00 	addl	$4673, %ebx
+ 8048421:	83 ec 0c 	subl	$12, %esp
+ 8048424:	8b 6c 24 20 	movl	32(%esp), %ebp
+ 8048428:	8d b3 0c ff ff ff 	leal	-244(%ebx), %esi
+ 804842e:	e8 3d fe ff ff 	calll	-451 <_init>
+ 8048433:	8d 83 08 ff ff ff 	leal	-248(%ebx), %eax
+ 8048439:	29 c6 	subl	%eax, %esi
+ 804843b:	c1 fe 02 	sarl	$2, %esi
+ 804843e:	85 f6 	testl	%esi, %esi
+ 8048440:	74 23 	je	35 <__libc_csu_init+0x55>
+ 8048442:	8d b6 00 00 00 00 	leal	(%esi), %esi
+ 8048448:	83 ec 04 	subl	$4, %esp
+ 804844b:	ff 74 24 2c 	pushl	44(%esp)
+ 804844f:	ff 74 24 2c 	pushl	44(%esp)
+ 8048453:	55 	pushl	%ebp
+ 8048454:	ff 94 bb 08 ff ff ff 	calll	*-248(%ebx,%edi,4)
+ 804845b:	83 c7 01 	addl	$1, %edi
+ 804845e:	83 c4 10 	addl	$16, %esp
+ 8048461:	39 f7 	cmpl	%esi, %edi
+ 8048463:	75 e3 	jne	-29 <__libc_csu_init+0x38>
+ 8048465:	83 c4 0c 	addl	$12, %esp
+ 8048468:	5b 	popl	%ebx
+ 8048469:	5e 	popl	%esi
+ 804846a:	5f 	popl	%edi
+ 804846b:	5d 	popl	%ebp
+ 804846c:	c3 	retl
+ 804846d:	8d 76 00 	leal	(%esi), %esi
+
+__libc_csu_fini:
+ 8048470:	f3 	rep
+ 8048471:	c3 	retl
+Disassembly of section .fini:
+_fini:
+ 8048474:	53 	pushl	%ebx
+ 8048475:	83 ec 08 	subl	$8, %esp
+ 8048478:	e8 93 fe ff ff 	calll	-365 <__x86.get_pc_thunk.bx>
+ 804847d:	81 c3 df 11 00 00 	addl	$4575, %ebx
+ 8048483:	83 c4 08 	addl	$8, %esp
+ 8048486:	5b 	popl	%ebx
+ 8048487:	c3 	retl
