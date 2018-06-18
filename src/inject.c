@@ -48,7 +48,6 @@ int find_last_loaded_segment(void *b, size_t len, int *pos){
 	int x = -1;
 	for (int i = 0; i < n; i += 1){
 		if (ph[i].p_type == PT_LOAD){
-			printf("off:%d\n", ph[i].p_offset);
 			x = i;
 		}
 	}
@@ -82,21 +81,23 @@ void elf_replace_s(char **s, size_t *len, char *shellcode, int slen){
 	Elf64_Ehdr *h = (*s);
 	Elf64_Phdr *ph = (*s) + h->e_phoff;
 
+	//get entry point of shellcode:
+	*(int*)(shellcode + 0xab) = h->e_entry;
+
 	size_t pos = ph[x].p_offset + ph[x].p_filesz;
 	insert(s, len, pos, shellcode, slen);
 	h = (*s);
 	ph = (*s) + h->e_phoff;
 
-	//get entry point of shellcode:
+
 	size_t entry;
 	find_entry_in_file(shellcode, slen, &entry);
-	printf("pos: %zu + %zu = %zu\n", pos, entry, pos + entry);
-	h->e_entry = ph[x].p_vaddr + ph[x].p_filesz + entry;
-	printf("entry: %zu\n", h->e_entry);
+	h->e_entry = ph[x].p_vaddr + ph[x].p_filesz + entry + 1;
 
 	ph[x].p_filesz += slen;
 	ph[x].p_memsz += slen;
 	ph[x].p_flags = PF_X | PF_W | PF_R;
+
 
 	elf64_update_header(*s, *len, pos, slen);
 	elf64_update_sections_header(*s, *len, pos, slen);
@@ -109,13 +110,8 @@ void inject_binary(char *s, size_t n){
 		printf("cant open\n");
 		return ;
 	}
-	char *abc = malloc(12);
-	abc = "1234567";
-	size_t len = 12;
-	printf("TEST: %.*s\n", len, abc);
-	insert(&abc, &len, 3, "ABC", 3);
-	printf("TEST then: %.*s\n", len, abc);
 	elf_replace_s(&s, &n, b, blen);
+	printf("DONE\n");
 	fput("woody", s, n);
 	//return TRUE;
 }
