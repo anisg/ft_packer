@@ -7,29 +7,27 @@
 
 #define OFF_JUMP 0xd9
 
-void update_injector(char *b, uint32_t bn, char *s, uint32_t n, uint32_t l, uint32_t r){
+void update_injector(char *b, uint64_t bn, char *s, uint64_t n, uint64_t l, uint64_t r){
 	Elf64_Ehdr *h = (void*)s;
 
-	*(uint32_t *)(b + OFF_JUMP) = 0x4003f0;
+	*(uint32_t *)(b + OFF_JUMP) = h->e_entry;
 	*(uint32_t *)(b + OFF_BEGIN_DECRYPT) = elf_offset_to_addr(s, n, l);
 	*(uint32_t *)(b + OFF_LENGTH_TO_DECRYPT) = r-l+1;
 }
 
-void range_to_encrypt(char *s, uint32_t n, uint32_t *l, uint32_t *r){
+void range_to_encrypt(char *s, uint64_t n, uint64_t *l, uint64_t *r){
 	int x;
 	Elf64_Ehdr *h = (void*)s;
 	Elf64_Phdr *ph = s + h->e_phoff;
 
 	x = elf_first_load_segment(s, n);
-	uint32_t off = 0;
-	if (ph[x].p_offset <= h->e_phoff + sizeof(*ph) * h->e_phnum)
-		off = 0x3f0;//h->e_phoff + sizeof(*ph) * h->e_phnum) - ph[x].p_offset;
+	uint64_t off = elf_off_text_section(s,n) - ph[x].p_offset;
 	*l = off + ph[x].p_offset;
-	*r = off +ph[x].p_offset + ph[x].p_filesz;
+	*r = off + ph[x].p_offset + ph[x].p_filesz;
 }
 
-int inject_binary(char **s, uint32_t *n, uint32_t *l, uint32_t *r){
-	char *b;uint32_t bn; uint32_t offset;
+int inject_binary(char **s, uint64_t *n, uint64_t *l, uint64_t *r){
+	char *b;uint64_t bn; uint64_t offset;
 
 	if (fget("res/injector", &b, &bn) == FALSE) return fail("can\'t open res/injector");
 

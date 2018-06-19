@@ -1,6 +1,6 @@
 #include "packer.h"
 
-int fget(char *filename, char **ptr, uint32_t *l){
+int fget(char *filename, char **ptr, uint64_t *l){
 	struct stat		buf;
 	int				fd;
 
@@ -16,7 +16,7 @@ int fget(char *filename, char **ptr, uint32_t *l){
 	return TRUE;
 }
 
-int fput(char *filename, char *ptr, uint32_t l){
+int fput(char *filename, char *ptr, uint64_t l){
 	int fd;
 
 	if ((fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0755)) < 0)
@@ -26,7 +26,7 @@ int fput(char *filename, char *ptr, uint32_t l){
 	return TRUE;
 }
 
-void insert(char **s1, uint32_t *n1, int pos, char *s2, uint32_t n2){
+void insert(char **s1, uint64_t *n1, int pos, char *s2, uint64_t n2){
 	char *ns = malloc( (*n1) + n2 );
 	size_t i,j,l;
 	for (i = 0; i <= pos; i += 1){ ns[i] = (*s1)[i]; }
@@ -41,4 +41,17 @@ int fail(char *reason){
 	dprintf(2, "Error: %s\n", reason);
 	exit(-1);
 	return -1;
+}
+
+int     str_equal(char *s1, char *s2)
+{
+	int i;
+
+	i = 0;
+	if (!s1 || !s2)
+		return FALSE;
+	while (s1[i] && s2[i]
+		&& (s1[i] == s2[i]))
+		i++;
+	return (s1[i] - s2[i]) == 0;
 }

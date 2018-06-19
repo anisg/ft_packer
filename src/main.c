@@ -6,8 +6,8 @@ int usage(char *name){
 }
 
 int packer(char *filename){
-	char *s; uint32_t n; uint32_t k;
-	uint32_t l,r; //l as left, r as right
+	char *s; uint64_t n; uint64_t k;
+	uint64_t l,r; //l as left, r as right
 
 	if (fget(filename, &s, &n) == FALSE) return fail("can\'t open file");
 
