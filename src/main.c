@@ -1,29 +1,24 @@
 #include "packer.h"
 
-extern char *template;
-
-int fail(char *reason){
-	printf("Error: %s\n", reason);
-	return -1;
-}
-
 int usage(char *name){
 	printf("Usage: %s bin\n", name);
 	return -1;
 }
 
 int packer(char *filename){
-	char *s; size_t n; uint32_t k;
+	char *s; uint32_t n; uint32_t k;
+	uint32_t l,r; //l as left, r as right
 
 	if (fget(filename, &s, &n) == FALSE) return fail("can\'t open file");
 
+	if (is_elf(s) == FALSE) return fail("file is not a valid elf64 file");
+	elf_update_flags_of_load_segments(s, n);
+	printf("n:%d\n", n);
 	k = random_key();
-	encrypt_bin((uint32_t *)s, n, k);
-	inject_binary(s,n);
-	//inject_key(k);
-	printf("k: %u\n", k);
-
-	//if (fput(filename, s, n) == FALSE) return fail("can\'t save new file");
+	inject_binary(&s, &n, &l, &r);
+	printf("KEY:%d, L:%d r:%d\n", k,l,r);
+	//encryption(s + l, r-l+1, k);
+	fput("woody", s, n);
 	return 0;
 }
 

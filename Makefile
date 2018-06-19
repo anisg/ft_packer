@@ -1,7 +1,7 @@
 NAME = woody_woodpacker
 COLOR = "\033[92m"
 
-SRC = main.c utils.c crypt.c inject.c
+SRC = main.c utils.c crypt.c inject.c elf.c
 
 COMPILER = gcc
 FLAGS = -Wall -Wextra #-Werror

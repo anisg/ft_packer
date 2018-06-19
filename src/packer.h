@@ -7,7 +7,6 @@
 #define TRUE 1
 #define FALSE 0
 
-
 /*
 ** utils.c
 */
@@ -16,9 +15,10 @@
 #include <sys/mman.h> //mmap
 #include <fcntl.h> //open
 
-int fget(char *filename, char **ptr, size_t *l);
-int fput(char *filename, char *ptr, size_t l);
-void insert(char **s1, size_t *n1, int pos, char *s2, size_t n2);
+int fget(char *filename, char **ptr, uint32_t *l);
+int fput(char *filename, char *ptr, uint32_t l);
+void insert(char **s1, uint32_t *n1, int pos, char *s2, uint32_t n2);
+int fail(char *reason);
 
 /*
 ** crypt.c
@@ -31,11 +31,10 @@ void		encrypt_bin(uint32_t *buffer, size_t n, uint32_t key);
 ** inject.c
 */
 #include <elf.h>
-void inject_binary(char *s, int n);
+int inject_binary(char **s, uint32_t *n, uint32_t *l, uint32_t *r);
 
 /*
 ** main.c
 */
-
 
 #endif

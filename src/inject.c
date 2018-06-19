@@ -1,68 +1,41 @@
 #include "packer.h"
 
-#include <string.h>
+#define OFF_KEY 0x00
+#define OFF_BEGIN_DECRYPT 0x00
+#define OFF_LENGTH_TO_DECRYPT 0x00
 
-void elf64_update_header(void *b, size_t len, size_t pos, size_t add){
-	Elf64_Ehdr *h = b;
-	if (h->e_shoff > pos) h->e_shoff += add;
+#define OFF_JUMP 0xab
+
+void update_injector(char *b, uint32_t bn, char *s, uint32_t n){
+	Elf64_Ehdr *h = (void*)s;
+
+	*(uint32_t *)(b + OFF_JUMP) = h->e_entry;
 }
 
-void elf64_update_segments(void *b, size_t len, size_t pos, size_t add){
-	Elf64_Ehdr *h = b;
-	Elf64_Phdr *ph = b + h->e_phoff;
-	int n = h->e_phnum;
-	for (int i = 0; i < n; i += 1){
-		if (ph->p_offset > pos) {
-			ph->p_offset += add;
-			ph->p_vaddr += add;
-			ph->p_paddr += add;
-		}
-		else if (ph->p_offset <= pos && ph->p_offset + ph->p_filesz > pos){
-			ph->p_filesz += add;
-			ph->p_memsz += add;
-		}
-		ph++;
-	}
+void range_to_encrypt(char *s, uint32_t n, uint32_t *l, uint32_t *r){
+	int x;
+	Elf64_Ehdr *h = (void*)s;
+	Elf64_Phdr *ph = s + h->e_phoff;
+
+	x = elf_first_load_segment(s, n);
+	uint32_t off = 0;
+	if (ph[x].p_offset <= h->e_phoff + sizeof(*ph) * h->e_phnum)
+		off = (h->e_phoff + sizeof(*ph) * h->e_phnum) - ph[x].p_offset;
+	*l = off + ph[x].p_offset;
+	*r = off +ph[x].p_offset + ph[x].p_filesz;
 }
 
-void elf64_update_sections_header(void *b, size_t len, size_t pos, size_t add){
-	Elf64_Ehdr *h = b;
-	int n = h->e_shnum;
-	Elf64_Shdr *sh = b + h->e_shoff;
-	for (int i = 0; i < n; i += 1){
-		if (sh->sh_offset > pos){
-			sh->sh_offset += add;
-			sh->sh_addr += add;
-		}
-		sh++;
-	}
-	sh = b + h->e_shoff;
-	char *strs = b + (sh[h->e_shstrndx]).sh_offset;
-	printf("strs: %zu\n", (sh[h->e_shstrndx]).sh_offset);
-	for (int i = 0; i < n; i += 1){
-		printf("type: %d, name: %s, pos:%zu\n", sh->sh_type, strs + sh->sh_name, sh->sh_offset);
-		sh++;
-	}
-}
+int inject_binary(char **s, uint32_t *n, uint32_t *l, uint32_t *r){
+	char *b;uint32_t bn; uint32_t offset;
 
-void elf_replace_s(char **b, size_t *len, char *bin, int n){
-	int pos_length = 0x52b;
-	int pos_data = 0x5d4;
+	if (fget("res/injector", &b, &bn) == FALSE) return fail("can\'t open res/injector");
 
-	insert(b, len, pos_data, "0123456789abcdefg", 17);
-	elf64_update_header(*b, *len, pos_data, 16);
-	elf64_update_sections_header(*b, *len, pos_data, 16);
-	elf64_update_segments(*b, *len, pos_data, 16);
-	int *x = ((*b) + pos_length);
-	x[0] = 16;
-}
-
-void inject_binary(char *s, int n){
-	char *b;size_t blen;
-	if (!fget("bin_template", &b, &blen)) return ;
-	//if (is_elf_format(b,blen) == FALSE)
-	//	return FALSE;
-	elf_replace_s(&b, &blen, s, n);
-	fput("woody", b, blen);
-	//return TRUE;
+	update_injector(b, bn, s, n);
+	offset = elf_offset_after_last_load_segment(*s, *n);
+	insert(s, n, offset, b, bn);
+	range_to_encrypt(*s, *n, l, r);
+	elf_change_size_last_load_segment(*s, *n, bn);
+	elf_set_off_entry(*s, *n, offset + 1 + elf_offset_entry(b, bn));
+	elf_shift_offset(*s, *n, offset, bn);
+	return offset;
 }
