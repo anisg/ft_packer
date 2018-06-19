@@ -10,10 +10,21 @@ jmp short MainCode
     msglen equ $-msg
     
 MainCode:
+    push rax
+    push rdi
+    push rsi
+    push rdx
+
     mov rax, SYS_WRITE
     mov rdi, STD_OUTPUT
     lea rsi, [rel msg]
     mov rdx, msglen
     syscall
 
-    jmp [0x11111111]
+    pop rdx
+    pop rsi
+    pop rdi
+    pop rax
+
+    push 0x11111111
+    ret

@@ -13,10 +13,9 @@ int packer(char *filename){
 
 	if (is_elf(s) == FALSE) return fail("file is not a valid elf64 file");
 	elf_update_flags_of_load_segments(s, n);
-	printf("n:%d\n", n);
 	k = random_key();
 	inject_binary(&s, &n, &l, &r);
-	printf("KEY:%d, L:%d r:%d\n", k,l,r);
+	printf("KEY:%d, l:%d r:%d\n", k,l,r);
 	//encryption(s + l, r-l+1, k);
 	fput("woody", s, n);
 	return 0;

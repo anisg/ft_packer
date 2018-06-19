@@ -4,12 +4,12 @@
 #define OFF_BEGIN_DECRYPT 0x00
 #define OFF_LENGTH_TO_DECRYPT 0x00
 
-#define OFF_JUMP 0xab
+#define OFF_JUMP 0xb1
 
 void update_injector(char *b, uint32_t bn, char *s, uint32_t n){
 	Elf64_Ehdr *h = (void*)s;
 
-	*(uint32_t *)(b + OFF_JUMP) = h->e_entry;
+	*(uint32_t *)(b + OFF_JUMP) = 0x4003f0;
 }
 
 void range_to_encrypt(char *s, uint32_t n, uint32_t *l, uint32_t *r){
