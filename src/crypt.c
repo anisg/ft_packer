@@ -10,7 +10,7 @@ uint32_t random_key(){
 	return k;
 }
 
-void		encryption(char *s, size_t n, uint32_t key){
+void		encryption(unsigned char *s, size_t n, uint32_t key){
 	for (int i = 0; i < n; i += 1){
 		s[i] += 13;
 	}

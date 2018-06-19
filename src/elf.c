@@ -75,6 +75,19 @@ int elf_first_load_segment(void *s, uint32_t n){
 	return fail("no load segment in the binary\n");
 }
 
+uint32_t elf_offset_to_addr(void *s, uint32_t n, uint32_t off){
+	Elf64_Ehdr *h = s;
+	Elf64_Phdr *ph = s + h->e_phoff;
+
+	for (int i = 0; i < h->e_phnum; i += 1){
+		if (ph[i].p_type == PT_LOAD &&
+				off >= ph[i].p_offset && off <= ph[i].p_offset + ph[i].p_filesz){
+			return ph[i].p_vaddr + (off - ph[i].p_offset);
+		}
+	}
+	return fail("wasn\'t able to convert an offset to an memory address.");
+}
+
 uint32_t elf_offset_after_last_load_segment(void *s, uint32_t n){
 	int x;
 	Elf64_Ehdr *h = (void*)s;
@@ -100,15 +113,7 @@ int is_elf(char *s, uint32_t n){
 
 int elf_set_off_entry(char *s, uint32_t n, uint32_t off_entry){
 	Elf64_Ehdr *h = (void*)s;
-	Elf64_Phdr *ph = s + h->e_phoff;
 
-	for (int i = 0; i < h->e_phnum; i += 1){
-		if (ph[i].p_type == PT_LOAD &&
-				off_entry > ph[i].p_offset && off_entry < ph[i].p_offset + ph[i].p_filesz){
-			h->e_entry = ph[i].p_vaddr + (off_entry - ph[i].p_offset);
-			return TRUE;
-		}
-	}
-	fail("wasn\'t able to change the entry");
-	return FALSE;
+	h->e_entry = elf_offset_to_addr(s,n,off_entry);
+	return TRUE;
 }

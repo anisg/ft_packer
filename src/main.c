@@ -16,7 +16,7 @@ int packer(char *filename){
 	k = random_key();
 	inject_binary(&s, &n, &l, &r);
 	printf("KEY:%d, l:%d r:%d\n", k,l,r);
-	//encryption(s + l, r-l+1, k);
+	encryption(s + l, r-l+1, k);
 	fput("woody", s, n);
 	return 0;
 }

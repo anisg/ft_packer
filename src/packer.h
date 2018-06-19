@@ -25,7 +25,7 @@ int fail(char *reason);
 */
 #define DELTA 0x9e3779b9
 uint32_t	random_key();
-void		encrypt_bin(uint32_t *buffer, size_t n, uint32_t key);
+void		encryption(unsigned char *s, size_t n, uint32_t key);
 
 /*
 ** inject.c

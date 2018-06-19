@@ -4,7 +4,7 @@ COLOR = "\033[92m"
 SRC = main.c utils.c crypt.c inject.c elf.c
 
 COMPILER = gcc
-FLAGS = -Wall -Wextra #-Werror
+FLAGS = #-Wextra #-Wall #-Werror
 
 SRC_DIR 			= src
 OBJ_DIR				= obj
