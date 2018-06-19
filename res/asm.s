@@ -1,8 +1,6 @@
 SYS_WRITE equ 1
 STD_OUTPUT equ 1
 
-TO_PROG equ 0x11111111
-
 section .text
 global _start
 
@@ -18,4 +16,4 @@ MainCode:
     mov rdx, msglen
     syscall
 
-    jmp [TO_PROG]
+    jmp [0x11111111]
