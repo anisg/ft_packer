@@ -25,14 +25,14 @@ int str_equal(char *s1, char *s2);
 ** crypt.c
 */
 #define DELTA 0x9e3779b9
-uint64_t	random_key();
-void		encryption(unsigned char *s, size_t n, uint64_t key);
+uint32_t	*random_key(); //16 bytes key
+void encryption(char *s, uint64_t n, uint32_t *key);
 
 /*
 ** inject.c
 */
 #include <elf.h>
-int inject_binary(char **s, uint64_t *n, uint64_t *l, uint64_t *r);
+int inject_binary(char **s, uint64_t *n, uint64_t *l, uint64_t *r, uint32_t *k);
 
 /*
 ** main.c

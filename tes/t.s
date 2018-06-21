@@ -6,21 +6,15 @@ global _start
 
 _start:
 	jmp MainCode
-    msg: db `....WOODY....\n`
+	msg: db `....WOODY....\n`
     msglen equ $-msg
-    key: db `0000000000000000`
+	key: db "12341234"
 
 Decrypt_block:
 	;v -> rdi, k -> rsi
 	.in:
 	push rbp
 	mov rbp, rsp
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
 
 	;init data
 	mov r8, 0xC6EF3720 ;sum
@@ -79,25 +73,14 @@ Decrypt_block:
 			inc rdx
 			jmp .cond
 	.out:
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
 	pop rbp
 	ret
 
 Decrypt:
+	;s -> rdi, n -> rsi
 	.in:
 	push rbp
 	mov rbp, rsp
-	push r8
-
-	;s -> rdi, n -> rsi, key -> r8
-	mov rdi, 0x22222222
-	mov rsi, 0x33333333
-	mov r8, [rel key]
 
 	mov rdx, 0
 	.loop:
@@ -114,7 +97,6 @@ Decrypt:
 			push rdx
 
 			mov rdi, [rdi + rdx]
-			mov rsi, r8
 			call Decrypt_block
 
 			pop rdx
@@ -125,7 +107,6 @@ Decrypt:
 			add rdx,8
 			jmp .cond
 	.out:
-	pop r8
 	pop rbp
 	ret
 
@@ -141,6 +122,10 @@ MainCode:
     mov rdx, msglen
     syscall
 
+
+    mov rdi, rsp
+
+    mov rsi, rsp
 	call Decrypt
 
     pop rdx
@@ -148,6 +133,5 @@ MainCode:
     pop rdi
     pop rax
 
-    ;jump
-    push 0x11111111 
+    push 0x11111111
     ret
