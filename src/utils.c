@@ -27,7 +27,8 @@ int fput(char *filename, char *ptr, uint64_t l){
 }
 
 void insert(char **s1, uint64_t *n1, int pos, char *s2, uint64_t n2){
-	char *ns = malloc( (*n1) + n2 );
+	char *ns = (char *)mmap(ns,(*n1) + n2 , PROT_READ | PROT_WRITE | PROT_EXEC,
+                MAP_PRIVATE | MAP_ANON, -1, 0);
 	size_t i,j,l;
 	for (i = 0; i <= pos; i += 1){ ns[i] = (*s1)[i]; }
 	for (j = 0; j < n2; j += 1){ns[i+j] = s2[j]; }
