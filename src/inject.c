@@ -23,14 +23,8 @@ void update_injector(char *b, uint64_t bn, char *s, uint64_t n, uint64_t l, uint
 }
 
 void range_to_encrypt(char *s, uint64_t n, uint64_t *l, uint64_t *r){
-	int x;
-	Elf64_Ehdr *h = (void*)s;
-	Elf64_Phdr *ph = (void*)s + h->e_phoff;
-
-	x = elf_first_load_segment(s, n);
-	uint64_t off = elf_off_text_section(s,n) - ph[x].p_offset;
-	*l = off + ph[x].p_offset;
-	*r = off + ph[x].p_offset + ph[x].p_filesz;
+	*l = elf_off_text_section(s,n);
+	*r = elf_off_text_section(s,n) + elf_size_text_section(s,n)-1;
 }
 
 int inject_binary(char **s, uint64_t *n, uint64_t *l, uint64_t *r, uint32_t *k){

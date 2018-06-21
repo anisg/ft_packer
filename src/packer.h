@@ -34,6 +34,7 @@ void encryption(char *s, uint64_t n, uint32_t *key);
 */
 void elf_shift_offset(void *s, uint64_t n, uint64_t pos, uint64_t add);
 uint64_t elf_off_text_section(void *s, uint64_t n);
+uint64_t elf_size_text_section(void *s, uint64_t n);
 uint64_t elf_offset_entry(char *s, uint64_t n);
 void elf_update_flags_of_load_segments(char *s, uint64_t n);
 int elf_last_load_segment(char *s, uint64_t n);

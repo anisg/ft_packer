@@ -10,7 +10,6 @@ int packer(char *filename){
 	uint64_t l,r; //l as left, r as right
 
 	if (fget(filename, &s, &n) == FALSE) return fail("can\'t open file");
-
 	if (is_elf(s,n) == FALSE) return fail("file is not a valid elf64 file");
 	elf_update_flags_of_load_segments(s, n);
 	k = random_key();

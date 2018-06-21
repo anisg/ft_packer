@@ -39,11 +39,27 @@ uint64_t elf_off_text_section(void *s, uint64_t n){
 	(void)n;
 	char *strs = s + (sh[h->e_shstrndx]).sh_offset;
 	for (int i = 0; i < h->e_shnum; i += 1){
-		if (str_equal(strs+sh[i].sh_name, ".text"))
+		if (str_equal(strs+sh[i].sh_name, ".text")){
 			return sh[i].sh_offset;
+		}
 	}
 	return fail("text section not found");
 }
+
+uint64_t elf_size_text_section(void *s, uint64_t n){
+	Elf64_Ehdr *h = s;
+	Elf64_Shdr *sh = s + h->e_shoff;
+
+	(void)n;
+	char *strs = s + (sh[h->e_shstrndx]).sh_offset;
+	for (int i = 0; i < h->e_shnum; i += 1){
+		if (str_equal(strs+sh[i].sh_name, ".text")){
+			return sh[i].sh_size;
+		}
+	}
+	return fail("text section not found");
+}
+
 
 
 uint64_t elf_offset_entry(char *s, uint64_t n){
@@ -148,37 +164,52 @@ int elf_check_valid(char *s, uint64_t n){
 	if (n < sizeof(*h))
 		return fail("bad header");
 	h = (void*)s;
-	if (h->e_shoff > n)
+	if (h->e_shoff >= n)
 		return fail("bad header.sh_offset");
-	if (h->e_phoff > n)
+	if (h->e_phoff >= n)
 		return fail("bad header.ph_offset");
 
 	//sh
+
 	Elf64_Shdr *sh;
-	if (h->e_shoff + sizeof(*sh) > n)
+	if (h->e_shoff + sizeof(*sh) >= n)
 		return fail("bad section header (1)");
+	if (h->e_shoff + sizeof(*sh) * h->e_shstrndx >= n)
+		return fail("bad strings section header");
+
 	sh = (void*)s + h->e_shoff;
+	uint64_t sn = 0;
+	char *strs = NULL;
+	//check section header
 	for (int i = 0; i < h->e_shnum; i += 1){
-		if (sizeof(*sh) * i > n || sizeof(*sh) * i + sizeof(*sh) > n)
+		if (h->e_shoff + sizeof(*sh) * i >= n || h->e_shoff + sizeof(*sh) * i + sizeof(*sh) > n)
 			return fail("bad section header (2)");
 
-		if (sh[i].sh_offset > n)
-			return fail("bad section.offset (1)");
-		if (sh[i].sh_offset + sh[i].sh_size > n)
-			return fail("bad section.offset (2)");
+		if (i == h->e_shstrndx){
+			if (sh[i].sh_offset >= n || sh[i].sh_offset + sh[i].sh_size > n)
+				return fail("bad strings section (1)");
+			strs = (void*)s + sh[i].sh_offset;
+			sn = sh[i].sh_size;
+		}
+	}
+	for (int i = 0; i < h->e_shnum; i += 1){
+		if (i != h->e_shstrndx && strs != NULL && sh[i].sh_name + 5 <= sn && str_equal(strs+sh[i].sh_name, ".text")) {
+			if (sh[i].sh_offset >= n || sh[i].sh_offset + sh[i].sh_size > n)
+				return fail("bad .text section (1)");
+		}
 	}
 	
 	//ph
 	Elf64_Phdr *ph;
-	if (h->e_phoff + sizeof(*ph) > n)
+	if (h->e_phoff + sizeof(*ph) >= n)
 		return fail("bad program header (1)");
 
 	ph = (void*)s + h->e_phoff;
 	for (int i = 0; i < h->e_phnum; i += 1){
-		if (sizeof(*ph) * i > n || sizeof(*ph) * i + sizeof(*ph) > n)
+		if (h->e_phoff + sizeof(*ph) * i >= n || h->e_phoff + sizeof(*ph) * i + sizeof(*ph) > n)
 			return fail("bad program header (2)");
 
-		if (ph[i].p_offset > n)
+		if (ph[i].p_offset >= n)
 			return fail("bad segment.offset (1)");
 		if (ph[i].p_offset + ph[i].p_filesz > n)
 			return fail("bad segment.offset (2)");
