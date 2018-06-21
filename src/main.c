@@ -11,11 +11,11 @@ int packer(char *filename){
 
 	if (fget(filename, &s, &n) == FALSE) return fail("can\'t open file");
 
-	if (is_elf(s) == FALSE) return fail("file is not a valid elf64 file");
+	if (is_elf(s,n) == FALSE) return fail("file is not a valid elf64 file");
 	elf_update_flags_of_load_segments(s, n);
 	k = random_key();
 	inject_binary(&s, &n, &l, &r, k);
-	printf("KEY:[%d,%d,%d,%d], l:%d r:%d\n", k[0],k[1],k[2],k[3],l,r);
+	//printf("KEY:[%d,%d,%d,%d], l:%d r:%d\n", k[0],k[1],k[2],k[3],l,r);
 	encryption(s + l, r-l+1, k);
 	fput("woody", s, n);
 	return 0;

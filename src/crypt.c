@@ -9,7 +9,7 @@ uint32_t *random_key(){
 	read(fd, (char *)k, sizeof(*k)*4);
 	
 	//debug
-	for (int i = 0; i < sizeof(*k)*4; i += 1){ ((char*)k)[i] = '0';}
+	//for (int i = 0; i < sizeof(*k)*4; i += 1){ ((char*)k)[i] = '0';}
 
 	return k;
 }
@@ -28,7 +28,7 @@ void encrypt_block(uint32_t* v, uint32_t *k) {
 }
 
 void encryption(char *s, uint64_t n, uint32_t *key){
-	for (int i = 0; i < n; i += 8){
+	for (uint64_t i = 0; i < n; i += 8){
 		if (i + 7 <= n){
 			encrypt_block((uint32_t*)(s+i), key);
 		}

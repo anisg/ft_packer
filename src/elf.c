@@ -3,6 +3,7 @@
 void _elf_shift_offset_ph(void *s, uint64_t n, uint64_t pos, uint64_t add){
 	Elf64_Ehdr *h = s;
 	Elf64_Phdr *ph = s + h->e_phoff;
+	(void)n;
 	for (int i = 0; i < h->e_phnum; i += 1)
 		if (ph[i].p_offset > pos) {
 			ph[i].p_offset += add;
@@ -14,6 +15,7 @@ void _elf_shift_offset_ph(void *s, uint64_t n, uint64_t pos, uint64_t add){
 void _elf_shift_offset_sh(void *s, uint64_t n, uint64_t pos, uint64_t add){
 	Elf64_Ehdr *h = s;
 	Elf64_Shdr *sh = s + h->e_shoff;
+	(void)n;
 	for (int i = 0; i < h->e_shnum; i += 1)
 		if (sh[i].sh_offset > pos){
 			sh[i].sh_offset += add;
@@ -23,6 +25,7 @@ void _elf_shift_offset_sh(void *s, uint64_t n, uint64_t pos, uint64_t add){
 
 void elf_shift_offset(void *s, uint64_t n, uint64_t pos, uint64_t add){
 	Elf64_Ehdr *h = s;
+	(void)n;
 	if (pos < h->e_shoff) h->e_shoff += add;
 	if (pos < h->e_phoff) h->e_phoff += add;
 	_elf_shift_offset_ph(s, n, pos, add);
@@ -33,6 +36,7 @@ uint64_t elf_off_text_section(void *s, uint64_t n){
 	Elf64_Ehdr *h = s;
 	Elf64_Shdr *sh = s + h->e_shoff;
 
+	(void)n;
 	char *strs = s + (sh[h->e_shstrndx]).sh_offset;
 	for (int i = 0; i < h->e_shnum; i += 1){
 		if (str_equal(strs+sh[i].sh_name, ".text"))
@@ -44,8 +48,9 @@ uint64_t elf_off_text_section(void *s, uint64_t n){
 
 uint64_t elf_offset_entry(char *s, uint64_t n){
 	Elf64_Ehdr *h = (void*)s;
-	Elf64_Phdr *ph = s + h->e_phoff;
+	Elf64_Phdr *ph = (void*)s + h->e_phoff;
 
+	(void)n;
 	uint64_t entry = h->e_entry;
 	for (int i = 0; i < h->e_phnum; i += 1){
 		if (ph[i].p_type == PT_LOAD &&
@@ -58,8 +63,9 @@ uint64_t elf_offset_entry(char *s, uint64_t n){
 
 void elf_update_flags_of_load_segments(char *s, uint64_t n){
 	Elf64_Ehdr *h = (void*)s;
-	Elf64_Phdr *ph = s + h->e_phoff;
+	Elf64_Phdr *ph = (void*)s + h->e_phoff;
 
+	(void)n;
 	for (int i = 0; i < h->e_phnum; i += 1)
 		if (ph[i].p_type == PT_LOAD)
 			ph[i].p_flags = PF_X | PF_W | PF_R;
@@ -68,8 +74,9 @@ void elf_update_flags_of_load_segments(char *s, uint64_t n){
 int elf_last_load_segment(char *s, uint64_t n){
 	int x;
 	Elf64_Ehdr *h = (void*)s;
-	Elf64_Phdr *ph = s + h->e_phoff;
+	Elf64_Phdr *ph = (void*)s + h->e_phoff;
 
+	(void)n;
 	x = -1;
 	for (int i = 0; i < h->e_phnum; i += 1)
 		if (ph[i].p_type == PT_LOAD)
@@ -82,6 +89,7 @@ int elf_first_load_segment(void *s, uint64_t n){
 	Elf64_Ehdr *h = s;
 	Elf64_Phdr *ph = s + h->e_phoff;
 
+	(void)n;
 	for (int i = 0; i < h->e_phnum; i += 1)
 		if (ph[i].p_type == PT_LOAD)
 			return i;
@@ -92,6 +100,7 @@ uint64_t elf_offset_to_addr(void *s, uint64_t n, uint64_t off){
 	Elf64_Ehdr *h = s;
 	Elf64_Phdr *ph = s + h->e_phoff;
 
+	(void)n;
 	for (int i = 0; i < h->e_phnum; i += 1){
 		if (ph[i].p_type == PT_LOAD &&
 				off >= ph[i].p_offset && off <= ph[i].p_offset + ph[i].p_filesz){
@@ -106,6 +115,7 @@ uint64_t elf_offset_after_last_load_segment(void *s, uint64_t n){
 	Elf64_Ehdr *h = (void*)s;
 	Elf64_Phdr *ph = s + h->e_phoff;
 
+	(void)n;
 	x = elf_last_load_segment(s, n);
 	return ph[x].p_offset + ph[x].p_filesz;
 }
@@ -115,12 +125,14 @@ void elf_change_size_last_load_segment(void *s, uint64_t n, int add){
 	Elf64_Ehdr *h = (void*)s;
 	Elf64_Phdr *ph = s + h->e_phoff;
 
+	(void)n;
 	x = elf_last_load_segment(s, n);
 	ph[x].p_filesz += add;
 	ph[x].p_memsz += add;
 }
 
 int is_elf(char *s, uint64_t n){
+	(void)n;
 	return (*((uint32_t*)s) == 0x464c457f) && (s[4] == 2);
 }
 
@@ -130,3 +142,55 @@ int elf_set_off_entry(char *s, uint64_t n, uint64_t off_entry){
 	h->e_entry = elf_offset_to_addr(s,n,off_entry);
 	return TRUE;
 }
+
+int elf_check_valid(char *s, uint64_t n){
+	Elf64_Ehdr *h;
+	if (n < sizeof(*h))
+		return fail("bad header");
+	h = (void*)s;
+	if (h->e_shoff > n)
+		return fail("bad header.sh_offset");
+	if (h->e_phoff > n)
+		return fail("bad header.ph_offset");
+
+	//sh
+	Elf64_Shdr *sh;
+	if (h->e_shoff + sizeof(*sh) > n)
+		return fail("bad section header (1)");
+	sh = (void*)s + h->e_shoff;
+	for (int i = 0; i < h->e_shnum; i += 1){
+		if (sizeof(*sh) * i > n || sizeof(*sh) * i + sizeof(*sh) > n)
+			return fail("bad section header (2)");
+
+		if (sh[i].sh_offset > n)
+			return fail("bad section.offset (1)");
+		if (sh[i].sh_offset + sh[i].sh_size > n)
+			return fail("bad section.offset (2)");
+	}
+	
+	//ph
+	Elf64_Phdr *ph;
+	if (h->e_phoff + sizeof(*ph) > n)
+		return fail("bad program header (1)");
+
+	ph = (void*)s + h->e_phoff;
+	for (int i = 0; i < h->e_phnum; i += 1){
+		if (sizeof(*ph) * i > n || sizeof(*ph) * i + sizeof(*ph) > n)
+			return fail("bad program header (2)");
+
+		if (ph[i].p_offset > n)
+			return fail("bad segment.offset (1)");
+		if (ph[i].p_offset + ph[i].p_filesz > n)
+			return fail("bad segment.offset (2)");
+	}
+	return TRUE;
+}
+
+
+
+
+
+
+
+
+
