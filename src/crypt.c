@@ -2,15 +2,11 @@
 
 uint32_t *random_key(){
 	int		fd;
-	uint32_t *k = malloc(sizeof(*k) * 4);
 
+	uint32_t *k = mmap(0, sizeof(*k) * 4, PROT_WRITE, MAP_PRIVATE |  MAP_ANON, -1, 0);
 	if ((fd = open("/dev/urandom", O_RDONLY)) == -1)
 		return FALSE;
 	read(fd, (char *)k, sizeof(*k)*4);
-	
-	//debug
-	//for (int i = 0; i < sizeof(*k)*4; i += 1){ ((char*)k)[i] = '0';}
-
 	return k;
 }
 
