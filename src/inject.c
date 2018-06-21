@@ -1,7 +1,7 @@
 #include "packer.h"
 
 
-#define OFF_JUMP 0x1a1
+#define OFF_JUMP 0x1a0
 
 #define OFF_BEGIN_DECRYPT 0x138
 #define OFF_LENGTH_TO_DECRYPT 0x13d

@@ -97,7 +97,7 @@ Decrypt:
 	;s -> rdi, n -> rsi, key -> r8
 	mov rdi, 0x22222222
 	mov rsi, 0x33333333
-	mov r8, [rel key]
+	lea r8, [rel key]
 
 	mov rdx, 0
 	.loop:
@@ -107,13 +107,14 @@ Decrypt:
 		.stmt:
 			add rdx, 7
 			cmp rdx, rsi
+			jg .out
 			sub rdx, 7
-			jg .increment
+
 			push rdi
 			push rsi
 			push rdx
 
-			mov rdi, [rdi + rdx]
+			add rdi, rdx
 			mov rsi, r8
 			call Decrypt_block
 
