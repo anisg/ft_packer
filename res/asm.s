@@ -5,7 +5,25 @@ section .text
 global _start
 
 _start:
+	push rax
+	push rbx
+	push rcx
+	push rdx
+	push rsi
+	push rdi
+	push rbp
+	push rsp
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+	pushf
 	jmp MainCode
+
     msg: db `....WOODY....\n`
     msglen equ $-msg
     key: db `0000000000000000`
@@ -149,6 +167,23 @@ MainCode:
     pop rdi
     pop rax
 
+	popf
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsp
+	pop rbp
+	pop rdi
+	pop rsi
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
     ;jump
-    push 0x11111111 
+    push 0x11111111
     ret

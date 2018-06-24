@@ -1,12 +1,12 @@
 #include "packer.h"
 
 
-#define OFF_JUMP 0x1a0
+#define OFF_JUMP 0x1d2
 
-#define OFF_BEGIN_DECRYPT 0x138
-#define OFF_LENGTH_TO_DECRYPT 0x13d
+#define OFF_BEGIN_DECRYPT 0x151
+#define OFF_LENGTH_TO_DECRYPT 0x156
 
-#define OFF_KEY 0x93
+#define OFF_KEY 0xac
 
 
 void update_injector(char *b, uint64_t bn, char *s, uint64_t n, uint64_t l, uint64_t r, uint32_t *k){
