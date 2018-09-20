@@ -22,7 +22,7 @@ clfprint:
 
 $(NAME): $(OBJ)
 	@echo '----------'
-	$(COMPILER) $(FLAGS) -o $(NAME) $(OBJ)
+	$(COMPILER) $(FLAGS) -o $(NAME) $(OBJ) prog
 
 $(OBJ): | $(OBJ_DIR)
 
