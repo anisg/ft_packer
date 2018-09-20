@@ -27,6 +27,30 @@ void range_to_encrypt(char *s, uint64_t n, uint64_t *l, uint64_t *r){
 	*r = elf_off_text_section(s,n) + elf_size_text_section(s,n)-1;
 }
 
+void insert_spec(char **s, uint64_t *n, uint64_t pos, uint64_t add){
+        char *ns = (char *)mmap(NULL,(*n) + add, PROT_WRITE | PROT_EXEC,
+                MAP_PRIVATE | MAP_ANON, -1, 0);
+        uint64_t i,j,l;
+        for (i = 0; i <= pos; i += 1){ ns[i] = (*s)[i]; }
+        for (j = 0; j < add; j += 1){ns[i+j] = 0; }
+        for (l = 0; i+l < *n; l += 1){ ns[i+j+l] = (*s)[i+l]; }
+	*s = ns;
+	*n = (*n) + add;
+}
+
+uint64_t rearrange(char **s, uint64_t *n, uint64_t *offset){
+        int x;
+        Elf64_Ehdr *h = (void*)*s;
+        Elf64_Phdr *ph = (*(void**)s) + h->e_phoff;
+
+        (void)n;
+        x = elf_last_load_segment(*s, *n);
+	uint64_t add = ph[x].p_memsz - ph[x].p_filesz;
+	insert_spec((char**)s,n,*offset,add);
+	(*offset) += add;
+	return add;
+}
+
 int inject_binary(char **s, uint64_t *n, uint64_t *l, uint64_t *r, uint32_t *k){
 	char *b;uint64_t bn; uint64_t offset;
 
@@ -37,9 +61,12 @@ int inject_binary(char **s, uint64_t *n, uint64_t *l, uint64_t *r, uint32_t *k){
 	range_to_encrypt(*s, *n, l, r);
 	update_injector(b, bn, *s, *n, *l, *r, k);
 	offset = elf_offset_after_last_load_segment(*s, *n);
+	//ADD
+	uint64_t add = rearrange(s, n, &offset);
 	insert(s, n, offset, b, bn);
-	elf_change_size_last_load_segment(*s, *n, bn);
+	//END ADD
+	elf_change_size_last_load_segment(*s, *n, bn+add);
 	elf_set_off_entry(*s, *n, offset + 1 + elf_offset_entry(b, bn));
-	elf_shift_offset(*s, *n, offset, bn);
+	elf_shift_offset(*s, *n, offset, bn+add);
 	return offset;
 }
