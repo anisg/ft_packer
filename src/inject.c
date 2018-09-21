@@ -1,7 +1,7 @@
 #include "packer.h"
 
 
-#define OFF_JUMP 0x10144
+#define OFF_JUMP 0x10178
 
 #define OFF_BEGIN_DECRYPT 0x151
 #define OFF_LENGTH_TO_DECRYPT 0x156
@@ -16,6 +16,8 @@ void update_injector(char *b, uint64_t bn, char *s, uint64_t n, uint64_t l, uint
 	(void)l;
 	(void)r;
 	(void)k;
+	(void)h;
+	(void)b;
 	if (OFF_JUMP >= bn || OFF_BEGIN_DECRYPT >= bn || OFF_LENGTH_TO_DECRYPT >= bn || OFF_KEY >= bn)
 		fail("injector is corrupted");
 	*(uint32_t *)(b + OFF_JUMP) = h->e_entry;

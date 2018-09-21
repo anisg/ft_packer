@@ -40,12 +40,10 @@ size_t slen(char *s){
 }
 
 //===================================================
+register size_t r12 asm("r12");
+//register size_t r12 asm ("r12");
+
 
 void mymain(void) {
-  char *s = "COUCOU";
-  println(s);
-  register size_t x asm("r12") = 0x11111111;
-  asm("jmp *%r12");
-  leave(0);
+ println("WESH");
 }
-
